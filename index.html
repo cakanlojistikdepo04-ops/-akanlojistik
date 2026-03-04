@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LMS LOJİSTİK V22 - REVIZE</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+:root { --main-blue: #1e40af; --light-blue: #3b82f6; --bg: #f1f5f9; --white: #ffffff; --success: #10b981; --danger: #ef4444; --slate: #64748b; }
+body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: #1e293b; overflow-x: hidden; }
+.hidden { display: none !important; }
+#banner { background: #fbbf24; color: #000; padding: 12px; text-align: center; font-weight: bold; border-bottom: 2px solid #f59e0b; display: none; }
+.auth-container { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1e40af 0%, #1e1b4b 100%); }
+.auth-card { background: white; padding: 2.5rem; border-radius: 16px; width: 400px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); }
+.auth-card h2 { text-align: center; color: var(--main-blue); margin-bottom: 1.5rem; letter-spacing: -1px; }
+nav { background: #0f172a; color: white; padding: 0.8rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.nav-brand { font-weight: 800; font-size: 1.5rem; color: #60a5fa; cursor: pointer; }
+.nav-links { display: flex; gap: 15px; align-items: center; }
+.container { padding: 2rem; max-width: 1500px; margin: auto; }
+.tab-bar { display: flex; gap: 10px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px; }
+.tab-btn { padding: 12px 22px; border: none; background: #e2e8f0; cursor: pointer; border-radius: 10px; font-weight: 600; transition: 0.3s; white-space: nowrap; }
+.tab-btn.active { background: var(--main-blue); color: white; transform: translateY(-2px); }
+.card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; margin-bottom: 20px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th { background: #f8fafc; text-align: left; padding: 14px; border-bottom: 2px solid #e2e8f0; font-size: 12px; color: var(--slate); text-transform: uppercase; }
+td { padding: 14px; border-bottom: 1px solid #f1f5f9; font-size: 14px; vertical-align: top; }
+.approved-row { background-color: #ecfdf5 !important; border-left: 5px solid var(--success); }
+.grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+.full-w { grid-column: 1 / -1; }
+label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: #475569; }
+input, select, textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; transition: 0.2s; background: #f8fafc; box-sizing: border-box; }
+.btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-blue { background: var(--main-blue); color: white; }
+.btn-green { background: var(--success); color: white; }
+.btn-red { background: var(--danger); color: white; }
+.btn-outline { border: 1px solid #cbd5e1; background: transparent; color: var(--slate); }
+.badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.badge-pending { background: #fef3c7; color: #92400e; }
+.badge-success { background: #dcfce7; color: #166534; }
+.badge-danger { background: #fee2e2; color: #991b1b; }
+.assign-box { background: #f1f5f9; padding: 15px; border-radius: 10px; border: 1px dashed var(--main-blue); margin-top: 10px; }
+.wait-ui-card { background: #fffbeb; border: 1px solid #f59e0b; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 12px; }
+.price-tag { display: block; margin-top: 5px; color: #1e40af; font-weight: 800; font-size: 13px; background: #dbeafe; padding: 3px 8px; border-radius: 5px; text-align: center; }
+.filter-section { background: #eff6ff; padding: 15px; border-radius: 10px; border: 1px solid #bfdbfe; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+.sub-tab-bar { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; }
+.sub-tab-btn { padding: 8px 16px; border: 1px solid #cbd5e1; background: white; border-radius: 8px; color: var(--slate); font-weight: 600; cursor: pointer; transition: 0.2s; }
+.sub-tab-btn.active { border-color: var(--main-blue); color: var(--main-blue); background: #eff6ff; }
+.search-input { flex: 1; border: 2px solid var(--main-blue) !important; background: #fff !important; height: 45px; }
+.date-filter-input { width: 200px; height: 45px; }
+.verified-badge { display: inline-block; width: 16px; height: 16px; background-color: #0095f6; color: #fff; border-radius: 50%; text-align: center; line-height: 16px; font-size: 10px; margin-left: 5px; position: relative; font-family: Arial, sans-serif; }
+.verified-badge::after { content: ' ✓ '; font-weight: bold; }
+
+/* --- YENİ MESAJLAŞMA SİSTEMİ STİLLERİ --- */
+#chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 9999; }
+#chat-bubble { width: 60px; height: 60px; background: #0095f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 26px; transition: 0.3s; }
+#chat-bubble:hover { transform: scale(1.1); }
+#chat-window { width: 330px; height: 450px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e2e8f0; position: absolute; bottom: 75px; right: 0; }
+.chat-header { background: #0095f6; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+.chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f8fafc; }
+.msg { padding: 10px 14px; border-radius: 12px; max-width: 80%; font-size: 13px; line-height: 1.4; word-wrap: break-word; }
+.msg-cust { background: #0095f6; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+.msg-adm { background: #e2e8f0; color: #1e293b; align-self: flex-start; border-bottom-left-radius: 2px; }
+.chat-input-area { padding: 12px; border-top: 1px solid #e2e8f0; display: flex; gap: 8px; background: white; }
+.chat-input-area input { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; }
+</style>
+</head>
+<body>
+<div id="banner"></div>
+
+<div id="auth-screen" class="auth-container">
+    <div class="auth-card">
+        <div id="login-box">
+            <h2>LMS LOGISTICS</h2>
+            <label>E-Posta Adresi</label><input type="email" id="log-email" placeholder="mail@ornek.com">
+            <label style="margin-top:10px; display:block;">Şifre</label><input type="password" id="log-pass" placeholder="••••••">
+            <button class="btn btn-blue" style="width:100%; margin-top:20px;" onclick="handleLogin()">Giriş Yap</button>
+            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="switchAuth('reg')">Yeni Müşteri Kaydı</button>
+            <p style="text-align:center; font-size:12px; margin-top:25px; cursor:pointer; color:var(--slate)" onclick="adminDirect()">⚙️ Personel Girişi</p>
+        </div>
+        <div id="reg-box" class="hidden">
+            <h2>MÜŞTERİ KAYIT</h2>
+            <label>Firma İsmi</label><input type="text" id="reg-name">
+            <label>Yetkili İsmi</label><input type="text" id="reg-boss">
+            <label>E-Posta</label><input type="email" id="reg-email">
+            <label>Şifre</label><input type="password" id="reg-pass">
+            <button class="btn btn-green" style="width:100%; margin-top:20px;" onclick="handleRegister()">Kayıt Ol</button>
+            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="switchAuth('login')">Geri Dön</button>
+        </div>
+    </div>
+</div>
+
+<div id="cust-panel" class="hidden">
+    <nav>
+        <div class="nav-brand">LMS CUSTOMER</div>
+        <div class="nav-links">
+            <span id="cust-user-name" style="font-weight:bold; color:#60a5fa; display: flex; align-items: center;"></span>
+            <button class="btn btn-outline" style="color:white; border-color:#334155" onclick="showTab('cust-profile')">Profilim</button>
+            <button class="btn btn-red" onclick="logout()">Çıkış Yap</button>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="tab-bar">
+            <button class="tab-btn active" id="btn-c-new" onclick="showTab('cust-new-req')">Yeni Araç Talebi</button>
+            <button class="tab-btn" onclick="showTab('cust-list')">Taleplerim & Araç Bilgileri</button>
+            <button class="tab-btn" onclick="showTab('cust-price')">Fiyat Teklifi Al</button>
+        </div>
+        <div id="cust-new-req" class="card">
+            <h3>Araç Talep Formu</h3>
+            <div id="req-form-content">
+                <div style="display:flex; gap:10px; margin-bottom:20px;">
+                    <button class="btn btn-blue" onclick="renderReqForm('İHRACAT')">İHRACAT TALEBİ</button>
+                    <button class="btn btn-blue" onclick="renderReqForm('İTHALAT')">İTHALAT TALEBİ</button>
+                </div>
+                <div id="dynamic-req-form" class="grid-form"></div>
+                <div id="req-footer" class="hidden" style="margin-top:20px;">
+                    <button class="btn btn-green" style="width:100%" onclick="submitRequest()">TALEBİ GÖNDER</button>
+                </div>
+            </div>
+        </div>
+        <div id="cust-list" class="card hidden">
+            <h3>Güncel Talepler ve Atanan Araç Bilgileri</h3>
+            <div style="margin-bottom:15px;">
+                <input type="text" id="cust-search" placeholder="Tabloda ara (Plaka, Adres, Tip...)" class="search-input" onkeyup="filterTable('cust-table-area', this.value)">
+            </div>
+            <div id="cust-table-area" class="table-wrap"></div>
+        </div>
+        <div id="cust-price" class="card hidden">
+            <h3>Fiyat Teklifi Al</h3>
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button class="btn btn-outline" onclick="renderPriceForm('KONTEYNER')">Konteyner Taşıması</button>
+                <button class="btn btn-outline" onclick="renderPriceForm('DEPOLAMA')">Depolama</button>
+            </div>
+            <div id="dynamic-price-form" class="grid-form"></div>
+            <hr style="margin:25px 0; border:0; border-top:1px solid #eee;">
+            <h4>Geçmiş Fiyat Taleplerim</h4>
+            <div id="cust-price-list" class="table-wrap"></div>
+        </div>
+        <div id="cust-profile" class="card hidden">
+            <h3>Profil Ayarları</h3>
+            <div class="grid-form">
+                <div><label>Yeni Kullanıcı Adı</label><input type="text" id="cp-name"></div>
+                <div><label>Yeni Şifre</label><input type="password" id="cp-pass"></div>
+            </div>
+            <button class="btn btn-blue" style="margin-top:15px;" onclick="updateProfile('cust')">Güncelle</button>
+        </div>
+    </div>
+</div>
+
+<div id="admin-panel" class="hidden">
+    <nav>
+        <div class="nav-brand">LMS ADMIN CONTROL</div>
+        <div class="nav-links">
+            <button class="btn btn-blue" style="font-size:12px;" onclick="setBanner()">📢 Duyuru Yayınla</button>
+            <button class="btn btn-outline" style="color:white" onclick="showTab('adm-profile')">Profil</button>
+            <button class="btn btn-red" onclick="logout()">Çıkış Yap</button>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="tab-bar">
+            <button class="tab-btn active" id="btn-a-onay" onclick="showTab('adm-onay-merkezi')">Onay Merkezi</button>
+            <button class="tab-btn" onclick="showTab('adm-ops')">Operasyon (İth/İhr)</button>
+            <button class="tab-btn" onclick="showTab('adm-waits')">Beklemeler</button>
+            <button class="tab-btn" onclick="showTab('adm-prices')">Fiyat Talepleri</button>
+            <button class="tab-btn" onclick="showTab('adm-done')">Tamamlanan Yüklemeler</button>
+        </div>
+        <div id="adm-onay-merkezi" class="card">
+            <div class="sub-tab-bar">
+                <button id="sub-btn-pending" class="sub-tab-btn active" onclick="switchOnaySubTab('pending')">Bekleyen Araç Talepleri</button>
+                <button id="sub-btn-users" class="sub-tab-btn" onclick="switchOnaySubTab('users')">Müşteri Onayları</button>
+                <button id="sub-btn-all" class="sub-tab-btn" onclick="switchOnaySubTab('all')">Kullanıcı Listesi</button>
+            </div>
+            <div id="onay-content-area"></div>
+        </div>
+        <div id="adm-ops" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3>Operasyon Yönetimi</h3>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-outline" onclick="renderOpsTable('İHRACAT')">İHRACAT</button>
+                    <button class="btn btn-outline" onclick="renderOpsTable('İTHALAT')">İTHALAT</button>
+                </div>
+            </div>
+            <div class="filter-section">
+                <label style="white-space:nowrap;">📅 <b>MÜŞTERİ TARİHİNE GÖRE SÜZ:</b></label>
+                <input type="date" id="admin-date-filter" class="date-filter-input" onchange="applyOpsFilter()">
+                <input type="text" id="admin-ops-search" placeholder="Genel Arama (Müşteri, Plaka, Ref...)" class="search-input" onkeyup="filterTable('adm-ops-area', this.value)">
+                <button class="btn btn-outline" style="height:45px; padding:0 15px; font-size:12px;" onclick="clearOpsFilter()">Tümünü Göster</button>
+            </div>
+            <div id="adm-ops-area" class="table-wrap"></div>
+        </div>
+        <div id="adm-waits" class="card hidden">
+            <h3>Bekleme Onay/Red Listesi</h3>
+            <div id="adm-wait-area" class="table-wrap"></div>
+        </div>
+        <div id="adm-prices" class="card hidden">
+            <h3>Gelen Fiyat Talepleri</h3>
+            <div id="adm-price-area" class="table-wrap"></div>
+        </div>
+        <div id="adm-done" class="card hidden">
+            <h3>Arşiv: Tamamlanan İşler</h3>
+            <div id="adm-done-area" class="table-wrap"></div>
+        </div>
+        <div id="adm-profile" class="card hidden">
+            <h3>Admin Profil Düzenle</h3>
+            <div class="grid-form">
+                <div><label>Kullanıcı Adı</label><input type="text" id="ap-name" value="halil0441"></div>
+                <div><label>Şifre</label><input type="password" id="ap-pass" value="halil0441"></div>
+            </div>
+            <button class="btn btn-blue" style="margin-top:15px;" onclick="updateProfile('admin')">Kaydet</button>
+        </div>
+    </div>
+</div>
+
+<div id="chat-widget" class="hidden">
+    <div id="chat-window" class="hidden">
+        <div class="chat-header">
+            <span id="chat-title">Müşteri Hizmetleri</span>
+            <button onclick="toggleChat()" style="background:none; border:none; color:white; cursor:pointer; font-size:16px;">✕</button>
+        </div>
+        <div id="chat-msgs" class="chat-messages"></div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-inp" placeholder="Mesajınızı yazın..." onkeypress="if(event.key==='Enter') sendMsg()">
+            <button class="btn btn-blue" style="padding: 5px 12px; font-size:12px;" onclick="sendMsg()">Gönder</button>
+        </div>
+    </div>
+    <div id="chat-bubble" onclick="toggleChat()">💬</div>
+</div>
+
+<script>
+let users = JSON.parse(localStorage.getItem('lms_users')) || [];
+let requests = JSON.parse(localStorage.getItem('lms_reqs')) || [];
+let prices = JSON.parse(localStorage.getItem('lms_prices')) || [];
+let messages = JSON.parse(localStorage.getItem('lms_msgs')) || []; // Yeni mesaj dizisi
+let bannerMsg = localStorage.getItem('lms_banner') || "";
+let session = null;
+let currentReqType = "İHRACAT";
+let activeChatUser = ""; // Adminin hangi müşteriyle konuştuğunu tutar
+
+window.onload = () => {
+    if(bannerMsg) { document.getElementById('banner').innerText = bannerMsg; document.getElementById('banner').style.display = 'block'; }
+    checkAutoApproveWaits();
+    cleanOldData();
+};
+
+function save() {
+    localStorage.setItem('lms_users', JSON.stringify(users));
+    localStorage.setItem('lms_reqs', JSON.stringify(requests));
+    localStorage.setItem('lms_prices', JSON.stringify(prices));
+    localStorage.setItem('lms_msgs', JSON.stringify(messages)); // Mesajları kaydet
+    localStorage.setItem('lms_banner', bannerMsg);
+}
+
+// --- MESAJLAŞMA FONKSİYONLARI ---
+function toggleChat() {
+    const win = document.getElementById('chat-window');
+    win.classList.toggle('hidden');
+    if(!win.classList.contains('hidden')) renderMsgs();
+}
+
+function sendMsg() {
+    const inp = document.getElementById('chat-inp');
+    if(!inp.value.trim()) return;
+
+    const msgObj = {
+        from: session.role, // 'cust' veya 'admin'
+        userEmail: session.role === 'cust' ? session.email : activeChatUser,
+        text: inp.value,
+        time: Date.now()
+    };
+
+    messages.push(msgObj);
+    save();
+    inp.value = "";
+    renderMsgs();
+}
+
+function renderMsgs() {
+    const area = document.getElementById('chat-msgs');
+    area.innerHTML = "";
+    const targetEmail = session.role === 'cust' ? session.email : activeChatUser;
+
+    messages.filter(m => m.userEmail === targetEmail).forEach(m => {
+        const div = document.createElement('div');
+        div.className = `msg ${m.from === 'cust' ? 'msg-cust' : 'msg-adm'}`;
+        div.innerText = m.text;
+        area.appendChild(div);
+    });
+    area.scrollTop = area.scrollHeight;
+}
+
+function openAdminChat(email) {
+    activeChatUser = email;
+    document.getElementById('chat-title').innerText = email + " ile Sohbet";
+    document.getElementById('chat-widget').classList.remove('hidden');
+    document.getElementById('chat-window').classList.remove('hidden');
+    renderMsgs();
+}
+
+// --- MEVCUT SİSTEM FONKSİYONLARI ---
+function checkAutoApproveWaits() {
+    const now = Date.now();
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+    let changed = false;
+    requests.forEach(r => {
+        if(r.waitStatus === 'Beklemede' && r.waitSentDate && (now - r.waitSentDate > twentyFourHours)) {
+            r.waitStatus = 'Onaylandı'; r.waitActionDate = now; r.waitNote = "Sistem Tarafından Otomatik Onaylandı (24 Saat)"; changed = true;
+        }
+    });
+    if(changed) save();
+}
+
+function cleanOldData() {
+    const twentyDays = 20 * 24 * 60 * 60 * 1000;
+    const fifteenDays = 15 * 24 * 60 * 60 * 1000;
+    requests = requests.filter(r => {
+        if(r.status === 'Tamamlandı' && (Date.now() - r.doneDate > twentyDays)) return false;
+        return true;
+    });
+    prices = prices.filter(p => {
+        if(Date.now() - p.id > fifteenDays) return false;
+        return true;
+    });
+    save();
+}
+
+function switchAuth(mode) {
+    document.getElementById('login-box').classList.toggle('hidden', mode === 'reg');
+    document.getElementById('reg-box').classList.toggle('hidden', mode === 'login');
+}
+
+function handleRegister() {
+    const u = { name: document.getElementById('reg-name').value, boss: document.getElementById('reg-boss').value, email: document.getElementById('reg-email').value, pass: document.getElementById('reg-pass').value, status: 'Beklemede', reqBan: false, isVerified: false };
+    if(!u.name || !u.email || !u.pass) return alert("Lütfen tüm alanları doldurun.");
+    if(users.find(x => x.email === u.email)) return alert("Bu mail adresi zaten kayıtlı.");
+    users.push(u); save(); alert("Kaydınız alındı. Admin onayından sonra giriş yapabilirsiniz."); switchAuth('login');
+}
+
+function handleLogin() {
+    const email = document.getElementById('log-email').value;
+    const pass = document.getElementById('log-pass').value;
+    if(email === 'halil0441' && pass === 'halil0441') { session = { name: 'Admin Halil', role: 'admin' }; showAdminPanel(); return; }
+    const u = users.find(x => x.email === email && x.pass === pass);
+    if(!u) return alert("Giriş başarısız! Mail veya şifre yanlış.");
+    if(u.status === 'Banned') return alert("HESABINIZ BANLANMIŞTIR!");
+    if(u.status !== 'Onaylı') return alert("Hesabınız henüz onaylanmamış.");
+    session = { ...u, role: 'cust' }; showCustPanel();
+}
+
+function adminDirect() { document.getElementById('log-email').value = 'halil0441'; document.getElementById('log-pass').value = 'halil0441'; }
+function logout() { session = null; location.reload(); }
+
+function showTab(id) {
+    document.querySelectorAll('.container > .card').forEach(c => c.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    if(event) event.currentTarget.classList.add('active');
+    if(id === 'adm-onay-merkezi') switchOnaySubTab('pending');
+    if(id === 'adm-ops') renderOpsTable('İHRACAT');
+    if(id === 'adm-prices') renderAdmPrices();
+    if(id === 'adm-done') renderAdmDone();
+    if(id === 'adm-waits') renderAdmWaits();
+    if(id === 'cust-list') { checkAutoApproveWaits(); renderCustTable(); }
+    if(id === 'cust-price') renderCustPrices();
+    if(id === 'cust-profile') { document.getElementById('cp-name').value = session.name; document.getElementById('cp-pass').value = session.pass; }
+}
+
+function switchOnaySubTab(type) {
+    const area = document.getElementById('onay-content-area');
+    document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('sub-btn-' + type).classList.add('active');
+    area.innerHTML = "";
+    if(type === 'pending') { area.innerHTML = '<h3>Onay Bekleyen İstekler</h3><div id="adm-pending-area" class="table-wrap"></div>'; renderAdmPending(); }
+    else if(type === 'users') { area.innerHTML = '<h3>Müşteri Kayıt Onayları</h3><div id="adm-user-area" class="table-wrap"></div>'; renderAdmUsers(); }
+    else if(type === 'all') { area.innerHTML = '<h3>Tüm Kayıtlı Kullanıcılar</h3><div id="adm-all-users-area" class="table-wrap"></div>'; renderAllUsers(); }
+}
+
+function showAdminPanel() { 
+    document.getElementById('auth-screen').classList.add('hidden'); 
+    document.getElementById('admin-panel').classList.remove('hidden'); 
+    switchOnaySubTab('pending'); 
+}
+
+function showCustPanel() {
+    document.getElementById('auth-screen').classList.add('hidden');
+    document.getElementById('cust-panel').classList.remove('hidden');
+    const vIcon = session.isVerified ? '<span class="verified-badge" title="Güvenli Hesap"></span>' : '';
+    document.getElementById('cust-user-name').innerHTML = "Hoşgeldin, " + session.name + vIcon;
+    // SADECE MAVİ TİK VARSA BALONU GÖSTER
+    if(session.isVerified) {
+        document.getElementById('chat-widget').classList.remove('hidden');
+    }
+}
+
+function renderReqForm(type) {
+    currentReqType = type;
+    const area = document.getElementById('dynamic-req-form');
+    document.getElementById('req-footer').classList.remove('hidden');
+    let html = "";
+    if(type === 'İHRACAT') {
+        html = `<div class="full-w"><label>REFERANS NUMARASI</label><input type="text" id="f-ref"></div>
+        <div class="full-w"><label>YÜKLEME FİRMA İSMİ / ADRES</label><input type="text" id="f-addr"></div>
+        <div><label>YÜKLEME TARİHİ VE SAATİ</label><input type="datetime-local" id="f-date"></div>
+        <div><label>ARAÇ SAYISI (ADET)</label><input type="number" id="f-count" value="1" min="1"></div>
+        <div><label>EKİPMAN TÜRÜ</label><select id="f-eq"><option>20LİK</option><option>40HC</option><option>40DC</option></select></div>
+        <div><label>EKİPMAN ALIM YERİ</label><input type="text" id="f-take"></div>
+        <div><label>EKİPMAN TESLİM LİMANI (DÖNÜŞ)</label><input type="text" id="f-port"></div>
+        <div><label>TONAJ BİLGİSİ</label><input type="text" id="f-ton"></div>
+        <div><label>SİGORTA / TEMİNAT</label><select id="f-ins"><option>TEMİNATSIZ</option><option>TEMİNATLI</option></select></div>
+        <div class="full-w"><label>NOT</label><textarea id="f-note"></textarea></div>`;
+    } else {
+        html = `<div class="full-w"><label>KONTEYNER NUMARALARI (Alt alta yazabilirsiniz)</label><textarea id="f-cont" placeholder="Örn: ABCU1234567" rows="3"></textarea></div>
+        <div class="full-w"><label>BOŞALTMA ADRESİ</label><input type="text" id="f-addr"></div>
+        <div><label>BOŞALTMA TARİHİ VE SAATİ</label><input type="datetime-local" id="f-date"></div>
+        <div><label>ARAÇ SAYISI (ADET)</label><input type="number" id="f-count" value="1" min="1"></div>
+        <div><label>EKİPMAN TÜRÜ</label><select id="f-eq"><option>20LİK</option><option>40HC</option><option>40DC</option></select></div>
+        <div><label>EKİPMAN DOLU ALINACAK LİMAN</label><input type="text" id="f-take"></div>
+        <div><label>BOŞ TESLİM YERİ</label><input type="text" id="f-port"></div>
+        <div><label>ACENTE</label><input type="text" id="f-ace"></div>
+        <div><label>SİGORTA / TEMİNAT</label><select id="f-ins"><option>TEMİNATSIZ</option><option>TEMİNATLI</option></select></div>
+        <div class="full-w"><label>NOT</label><textarea id="f-note"></textarea></div>`;
+    }
+    area.innerHTML = html;
+}
+
+function submitRequest() {
+    const user = users.find(x => x.email === session.email);
+    if(user && user.reqBan) return alert("ARAÇ TALEBİ YASAKLANMIŞTIR! LÜTFEN FİRMA İLE İLETİŞİME GEÇİN.");
+    const inputDate = document.getElementById('f-date').value;
+    const vCount = parseInt(document.getElementById('f-count').value) || 1;
+    if(!document.getElementById('f-addr').value || !inputDate) return alert("Lütfen adres ve tarih bilgilerini girin.");
+    for(let i = 1; i <= vCount; i++) {
+        const req = { id: Date.now() + i, customer: session.name, type: currentReqType, ref: document.getElementById('f-ref')?.value || '', cont: document.getElementById('f-cont')?.value || '', addr: document.getElementById('f-addr').value, date: inputDate, count: "1", orderInBatch: i + "/" + vCount, eq: document.getElementById('f-eq').value, take: document.getElementById('f-take').value, port: document.getElementById('f-port').value, ton: document.getElementById('f-ton')?.value || '', ace: document.getElementById('f-ace')?.value || '', ins: document.getElementById('f-ins').value, note: document.getElementById('f-note').value, status: 'Beklemede', track: 'Onay Bekliyor', assign: null, waitStatus: null, transportPrice: null };
+        requests.push(req);
+    }
+    save(); alert(vCount + " adet araç talebi ayrı ayrı oluşturuldu."); showTab('cust-list');
+}
+
+function renderCustTable() {
+    const area = document.getElementById('cust-table-area');
+    let html = `<table><tr><th>İşlem (Sıra)</th><th>Adres & Tarih</th><th>Ekipman</th><th>Durum</th><th>Araç & Konteyner Bilgisi</th><th>İşlem</th></tr>`;
+    requests.filter(r => r.customer === session.name && r.status !== 'Tamamlandı').reverse().forEach(r => {
+        const assignText = r.assign ? `<div style="color:var(--main-blue); font-size:12px; line-height:1.4"><b>Plaka:</b> ${r.assign.plaka}<br><b>Şoför:</b> ${r.assign.name}<br><b>Konteyner:</b> ${r.assign.contNo || '-'}<br><b>Mühür:</b> ${r.assign.sealNo || '-'}</div>` : '<span style="color:var(--slate)">Henüz Atanmadı</span>';
+        let waitUI = "";
+        if(r.waitCost && r.waitStatus === 'Beklemede') {
+            waitUI = `<div class="wait-ui-card"><b>⚠ BEKLEME: ${r.waitCost} TL</b><br>
+            <div style="display:flex; gap:5px; margin-top:5px;">
+            <button class="btn btn-green" style="padding:4px; font-size:10px; flex:1" onclick="approveWaiting(${r.id})">ONAYLA</button>
+            <button class="btn btn-red" style="padding:4px; font-size:10px; flex:1" onclick="rejectWaiting(${r.id})">REDDET</button>
+            </div></div>`;
+        }
+        else if (r.waitStatus === 'Onaylandı') { waitUI = `<div class="badge badge-success" style="display:block; margin-top:5px; text-align:center">Bekleme Onaylı (${r.waitCost} TL)</div>`; }
+        else if (r.waitStatus === 'Reddedildi') { waitUI = `<div class="badge badge-danger" style="display:block; margin-top:5px; text-align:center; font-size:9px;">Bekleme Red: ${r.waitNote || ''}</div>`; }
+        const transportUI = r.transportPrice ? `<div class="price-tag">Nakliye: ${r.transportPrice} TL</div>` : "";
+        const typeDetail = r.type === 'İHRACAT' ? `<br><small style="color:var(--main-blue)">Ref: ${r.ref || '-'}</small>` : `<br><small style="color:var(--main-blue)">Cont: ${r.cont || '-'}</small>`;
+        html += `<tr class="${r.status === 'Onaylandı' ? 'approved-row' : ''}"><td><b>${r.type}</b>${typeDetail}<br><small>Sıra: ${r.orderInBatch || '1/1'}</small></td><td>${r.addr}<br><small>${r.date.replace('T', ' ')}</small></td><td>${r.eq}<br><small>${r.ins}</small></td><td><span class="badge ${r.status === 'Onaylandı' ? 'badge-success' : 'badge-pending'}">${r.track}</span></td><td>${assignText} ${waitUI} ${transportUI}</td><td><button class="btn btn-red" style="padding:4px 8px; font-size:11px;" onclick="cancelReq(${r.id})">İptal Et</button></td></tr>`;
+    });
+    area.innerHTML = html + "</table>";
+}
+
+function approveWaiting(id) { const r = requests.find(x => x.id === id); r.waitStatus = 'Onaylandı'; r.waitActionDate = Date.now(); save(); renderCustTable(); }
+function rejectWaiting(id) {
+    const reason = prompt("Bekleme ücretini neden reddediyorsunuz? (Zorunludur)");
+    if(!reason || reason.trim().length < 3) return alert("Lütfen geçerli bir sebep yazınız. Sebepsiz red kabul edilmez.");
+    const r = requests.find(x => x.id === id);
+    r.waitStatus = 'Reddedildi'; r.waitActionDate = Date.now(); r.waitNote = reason; save(); renderCustTable();
+}
+
+function cancelReq(id) { const reason = prompt("İptal nedeni nedir?"); if(!reason) return; const r = requests.find(x => x.id === id); r.status = 'İptal Talebi'; r.track = "İptal İstendi: " + reason; save(); renderCustTable(); }
+
+function renderAdmPending() {
+    const area = document.getElementById('adm-pending-area');
+    if(!area) return;
+    let html = `<table><tr><th>Müşteri</th><th>Tür (Sıra)</th><th>Bilgi</th><th>Adres</th><th>İşlem</th></tr>`;
+    requests.filter(r => r.status === 'Beklemede' || r.status === 'İptal Talebi').forEach(r => {
+        html += `<tr><td><b>${r.customer}</b></td><td>${r.type} (${r.orderInBatch || '1/1'})</td><td>${r.ref || r.cont} (${r.eq})</td><td>${r.addr}</td><td>${r.status === 'İptal Talebi' ? `<button class="btn btn-red" onclick="deleteReq(${r.id})">İptali Onayla</button>` : `<button class="btn btn-green" onclick="approveReq(${r.id})">Onayla</button> <button class="btn btn-red" onclick="deleteReq(${r.id})">Reddet</button>`}</td></tr>`;
+    });
+    area.innerHTML = html + "</table>";
+}
+
+function renderOpsTable(type) {
+    currentReqType = type;
+    const area = document.getElementById('adm-ops-area');
+    const filterVal = document.getElementById('admin-date-filter').value;
+    let filteredReqs = requests.filter(r => r.type === type && r.status === 'Onaylandı');
+    if(filterVal) { filteredReqs = filteredReqs.filter(r => r.date.startsWith(filterVal)); }
+    filteredReqs.reverse();
+    let html = `<h4>${type} LİSTESİ</h4>`;
+    if(type === 'İHRACAT') {
+        html += `<table><tr><th>TARİH</th><th>MÜŞTERİ</th><th>ADRES / BİLGİ</th><th>REFERANS NUMARASI</th><th>KONTEYNER ALIM YERİ</th><th>DÖNÜŞ LİMANI</th><th>SIRA DETAYI</th><th>ARAÇ & TUTAR GİRİŞİ</th></tr>`;
+        filteredReqs.forEach(r => {
+            const transportUI = r.transportPrice ? `<div class="price-tag">Nakliye: ${r.transportPrice} TL</div>` : "";
+            html += `<tr><td style="font-weight:700; color:var(--slate)">${r.date.replace('T', ' ')}</td><td><b>${r.customer}</b></td><td>${r.addr}</td><td>${r.ref || '-'}</td><td>${r.take || '-'}</td><td>${r.port || '-'}</td><td><b>${r.orderInBatch || '1/1'}</b><br><small>${r.eq}</small></td><td><div style="font-weight:700; color:var(--success); margin-bottom:5px;">${r.track}</div><button class="btn btn-blue" style="padding:5px 10px; font-size:11px;" onclick="toggleAssignUI(${r.id})">ARAÇ / KONTEYNER GİRİŞİ</button><div id="assign-ui-${r.id}" class="hidden assign-box"><label>Plaka</label><input id="as-plaka-${r.id}" value="${r.assign?.plaka || ''}"><label>Şoför</label><input id="as-name-${r.id}" value="${r.assign?.name || ''}"><label>Tel</label><input id="as-tel-${r.id}" value="${r.assign?.tel || ''}"><label>Konteyner No</label><input id="as-cont-${r.id}" value="${r.assign?.contNo || ''}"><label>Mühür No</label><input id="as-seal-${r.id}" value="${r.assign?.sealNo || ''}"><label>Nakliye Tutarı (TL)</label><input type="number" id="as-price-${r.id}" value="${r.transportPrice || ''}"><button class="btn btn-green" style="margin-top:5px; width:100%" onclick="saveAssign(${r.id})">Kaydet</button><div style="margin-top:10px; border-top:1px solid #ccc; padding-top:10px;"><label>Bekleme Tutarı</label><input type="number" id="w-cost-${r.id}" value="${r.waitCost || ''}"><button class="btn btn-red" style="margin-top:5px; width:100%" onclick="sendWaitCost(${r.id})">Bekleme Gönder</button></div></div>${transportUI}<select style="margin-top:5px" onchange="updateTrack(${r.id}, this.value)"><option value="">Durum Güncelle...</option><option>Araç Yolda</option><option>Varış Yaptı</option><option>Yükleme Bitti</option><option>Limandan Çıktı</option><option>Limana Teslim Edildi</option></select></td></tr>`;
+        });
+    } else {
+        html += `<table><tr><th>TARİH</th><th>MÜŞTERİ</th><th>ADRES / BİLGİ</th><th>KONTEYNER NUMARASI</th><th>EKİPMAN DOLU ALINACAK LİMAN</th><th>BOŞ TESLİM YERİ</th><th>SIRA DETAYI</th><th>ARAÇ & TUTAR GİRİŞİ</th></tr>`;
+        filteredReqs.forEach(r => {
+            const transportUI = r.transportPrice ? `<div class="price-tag">Nakliye: ${r.transportPrice} TL</div>` : "";
+            html += `<tr><td style="font-weight:700; color:var(--slate)">${r.date.replace('T', ' ')}</td><td><b>${r.customer}</b></td><td>${r.addr}</td><td>${r.cont || '-'}</td><td>${r.take || '-'}</td><td>${r.port || '-'}</td><td><b>${r.orderInBatch || '1/1'}</b><br><small>${r.eq}</small></td><td><div style="font-weight:700; color:var(--success); margin-bottom:5px;">${r.track}</div><button class="btn btn-blue" style="padding:5px 10px; font-size:11px;" onclick="toggleAssignUI(${r.id})">ARAÇ / KONTEYNER GİRİŞİ</button><div id="assign-ui-${r.id}" class="hidden assign-box"><label>Plaka</label><input id="as-plaka-${r.id}" value="${r.assign?.plaka || ''}"><label>Şoför</label><input id="as-name-${r.id}" value="${r.assign?.name || ''}"><label>Tel</label><input id="as-tel-${r.id}" value="${r.assign?.tel || ''}"><label>Konteyner No</label><input id="as-cont-${r.id}" value="${r.assign?.contNo || ''}"><label>Nakliye Tutarı (TL)</label><input type="number" id="as-price-${r.id}" value="${r.transportPrice || ''}"><button class="btn btn-green" style="margin-top:5px; width:100%" onclick="saveAssign(${r.id})">Kaydet</button><div style="margin-top:10px; border-top:1px solid #ccc; padding-top:10px;"><label>Bekleme Tutarı</label><input type="number" id="w-cost-${r.id}" value="${r.waitCost || ''}"><button class="btn btn-red" style="margin-top:5px; width:100%" onclick="sendWaitCost(${r.id})">Bekleme Gönder</button></div></div>${transportUI}<select style="margin-top:5px" onchange="updateTrack(${r.id}, this.value)"><option value="">Durum...</option><option>Araç Yolda</option><option>Teslim Edildi</option></select></td></tr>`;
+        });
+    }
+    area.innerHTML = html + "</table>";
+}
+
+function renderAdmWaits() {
+    const area = document.getElementById('adm-wait-area');
+    let html = `<table><tr><th>Müşteri / Ref</th><th>Tür</th><th>Plaka</th><th>Tutar</th><th>Durum</th><th>Not / Sebep</th></tr>`;
+    requests.filter(r => r.waitCost).reverse().forEach(r => {
+        const statusBadge = r.waitStatus === 'Beklemede' ? '<span class="badge badge-pending">Onay Bekliyor</span>' : (r.waitStatus === 'Onaylandı' ? '<span class="badge badge-success">Onayladı</span>' : '<span class="badge badge-danger">Reddetti</span>');
+        html += `<tr><td><b>${r.customer}</b><br><small>${r.ref || r.cont || '-'}</small></td><td>${r.type}</td><td>${r.assign?.plaka || '-'}</td><td><b>${r.waitCost} TL</b></td><td>${statusBadge}</td><td><small>${r.waitNote || (r.waitStatus === 'Onaylandı' ? 'Müşteri Onayladı' : '-')}</small></td></tr>`;
+    });
+    area.innerHTML = html + "</table>";
+}
+
+function saveAssign(id) {
+    const r = requests.find(x => x.id === id);
+    r.assign = { plaka: document.getElementById('as-plaka-'+id).value, name: document.getElementById('as-name-'+id).value, tel: document.getElementById('as-tel-'+id) ? document.getElementById('as-tel-'+id).value : '', contNo: document.getElementById('as-cont-'+id).value, sealNo: document.getElementById('as-seal-'+id) ? document.getElementById('as-seal-'+id).value : '' };
+    r.transportPrice = document.getElementById('as-price-'+id).value;
+    r.track = "Araç Atandı (" + r.assign.plaka + ")";
+    save(); alert("Bilgiler başarıyla kaydedildi."); renderOpsTable(r.type);
+}
+
+function renderAllUsers() {
+    const area = document.getElementById('adm-all-users-area');
+    if(!area) return;
+    let html = `<table><tr><th>Firma İsmi</th><th>Yetkili</th><th>E-Posta (Giriş)</th><th>Durum</th><th>İşlem</th></tr>`;
+    users.forEach(u => {
+        const isBanned = u.status === 'Banned';
+        const reqBanned = u.reqBan;
+        const isVerified = u.isVerified || false;
+        const vBadge = isVerified ? '<span class="verified-badge"></span>' : '';
+        html += `<tr><td><b>${u.name}</b> ${vBadge}</td><td>${u.boss}</td><td>${u.email}</td><td>${isBanned ? '<span style="color:red; font-weight:bold">BANLI</span>' : (u.status === 'Onaylı' ? '<span style="color:green">Aktif</span>' : '<span style="color:orange">Bekliyor</span>')}</td><td>
+        <button class="btn btn-blue" style="padding:2px 5px; font-size:10px; background:#0095f6" onclick="openAdminChat('${u.email}')">Mesaj</button>
+        <button class="btn ${isVerified ? 'btn-outline' : 'btn-blue'}" style="padding:2px 5px; font-size:10px;" onclick="toggleVerify('${u.email}')">${isVerified ? 'Tiki Kaldır' : 'Mavi Tik Ver'}</button>
+        <button class="btn ${isBanned ? 'btn-green' : 'btn-red'}" style="padding:2px 5px; font-size:10px;" onclick="toggleBan('${u.email}')">${isBanned ? 'Ban Kaldır' : 'Banla'}</button>
+        <button class="btn ${reqBanned ? 'btn-green' : 'btn-red'}" style="padding:2px 5px; font-size:10px; background:#f59e0b" onclick="toggleReqBan('${u.email}')">${reqBanned ? 'Talebi Aç' : 'Talebi Yasakla'}</button>
+        <button class="btn btn-red" style="padding:2px 5px; font-size:10px;" onclick="deleteUser('${u.email}')">Sil</button></td></tr>`;
+    });
+    area.innerHTML = html + "</table>";
+}
+
+function toggleVerify(email) { const u = users.find(x => x.email === email); u.isVerified = !u.isVerified; save(); renderAllUsers(); }
+function toggleBan(email) { const u = users.find(x => x.email === email); u.status = (u.status === 'Banned') ? 'Onaylı' : 'Banned'; save(); renderAllUsers(); }
+function toggleReqBan(email) { const u = users.find(x => x.email === email); u.reqBan = !u.reqBan; save(); renderAllUsers(); }
+function deleteUser(email) { if(confirm("Bu kullanıcıyı silmek istediğinize emin misiniz?")) { users = users.filter(x => x.email !== email); save(); renderAllUsers(); } }
+
+function sendWaitCost(id) {
+    const r = requests.find(x => x.id === id);
+    r.waitCost = document.getElementById('w-cost-'+id).value;
+    r.waitStatus = 'Beklemede';
+    r.waitSentDate = Date.now();
+    save(); alert("Bekleme gönderildi. Müşteriye 24 saat süre verildi."); renderOpsTable(r.type);
+}
+
+function toggleAssignUI(id) { document.getElementById('assign-ui-'+id).classList.toggle('hidden'); }
+function updateTrack(id, val) { if(!val) return; const r = requests.find(x => x.id === id); r.track = val; if(val === 'Limana Teslim Edildi' || val === 'Teslim Edildi') { r.status = 'Tamamlandı'; r.doneDate = Date.now(); } save(); renderOpsTable(r.type); }
+function approveReq(id) { const r = requests.find(x => x.id === id); r.status = 'Onaylandı'; r.track = 'Onaylandı - Araç Bekleniyor'; save(); renderAdmPending(); }
+function deleteReq(id) { requests = requests.filter(x => x.id !== id); save(); renderAdmPending(); }
+
+function renderAdmUsers() {
+    const area = document.getElementById('adm-user-area');
+    if(!area) return;
+    let html = `<table><tr><th>Firma</th><th>Yetkili</th><th>Email</th><th>İşlem</th></tr>`;
+    users.filter(u => u.status === 'Beklemede').forEach(u => { html += `<tr><td>${u.name}</td><td>${u.boss}</td><td>${u.email}</td><td><button class="btn btn-green" onclick="approveUser('${u.email}')">Onayla</button></td></tr>`; });
+    area.innerHTML = html + "</table>";
+}
+
+function approveUser(email) { users.find(x => x.email === email).status = 'Onaylı'; save(); renderAdmUsers(); }
+
+function renderAdmDone() {
+    const area = document.getElementById('adm-done-area');
+    let html = `<table><tr><th>Müşteri</th><th>Tür</th><th>Plaka</th><th>Tarih</th></tr>`;
+    requests.filter(r => r.status === 'Tamamlandı').reverse().forEach(r => { html += `<tr><td>${r.customer}</td><td>${r.type}</td><td>${r.assign?.plaka}</td><td>${new Date(r.doneDate).toLocaleDateString()}</td></tr>`; });
+    area.innerHTML = html + "</table>";
+}
+
+function renderPriceForm(type) {
+    const area = document.getElementById('dynamic-price-form');
+    let html = type === 'KONTEYNER' ? `<div><label>Çıkış Limanı</label><input type="text" id="p-out"></div><div><label>Varış Adresi</label><input type="text" id="p-in"></div><div><label>Tonaj Bilgisi</label><input type="text" id="p-ton"></div><div class="full-w"><button class="btn btn-blue" onclick="submitPriceReq('Konteyner')">Fiyat İste</button></div>` : `<div><label>Kaç Gün Kalacak?</label><input type="number" id="p-day"></div><div><label>Depodan Çıkış Tarihi</label><input type="date" id="p-date"></div><div><label>Ekipman Türü</label><select id="p-eq"><option>20LİK</option><option>40LIK</option></select></div><div class="full-w"><button class="btn btn-blue" onclick="submitPriceReq('Depolama')">Fiyat İste</button></div>`;
+    area.innerHTML = html;
+}
+
+function submitPriceReq(type) {
+    const detail = type === 'Konteyner' ? `${document.getElementById('p-out').value} > ${document.getElementById('p-in').value}` : `${document.getElementById('p-day').value} Gün / ${document.getElementById('p-date').value} / ${document.getElementById('p-eq').value}`;
+    const p = { id: Date.now(), cust: session.name, type: type, detail: detail, price: null };
+    prices.push(p); save(); alert("Fiyat talebi gönderildi."); renderPriceForm(type); renderCustPrices();
+}
+
+function renderAdmPrices() {
+    const area = document.getElementById('adm-price-area');
+    let html = `<table><tr><th>Müşteri</th><th>Tür</th><th>Detay</th><th>Fiyat Ver</th></tr>`;
+    prices.filter(p => p.price === null).forEach(p => {
+        html += `<tr><td>${p.cust}</td><td>${p.type}</td><td>${p.detail}</td><td><input type="text" id="pr-val-${p.id}" placeholder="Örn: 5000 TL"> <button class="btn btn-green" style="padding:5px 10px; font-size:12px;" onclick="sendPrice(${p.id})">Gönder</button></td></tr>`;
+    });
+    area.innerHTML = html + "</table>";
+}
+
+function sendPrice(id) {
+    const val = document.getElementById('pr-val-'+id).value;
+    if(!val) return alert("Lütfen fiyat girin.");
+    prices.find(x => x.id === id).price = val;
+    save(); alert("Fiyat gönderildi."); renderAdmPrices();
+}
+
+function renderCustPrices() {
+    const area = document.getElementById('cust-price-list');
+    let html = `<table><tr><th>Tür</th><th>Detay</th><th>Fiyat Durumu</th></tr>`;
+    prices.filter(p => p.cust === session.name).reverse().forEach(p => {
+        const priceStatus = p.price ? `<b style="color:var(--success)">${p.price}</b>` : `<i style="color:var(--slate)">Bekleniyor...</i>`;
+        html += `<tr><td>${p.type}</td><td>${p.detail}</td><td>${priceStatus}</td></tr>`;
+    });
+    area.innerHTML = html + "</table>";
+}
+
+function updateProfile(role) {
+    if(role === 'admin') { alert("Admin bilgileri kaydedildi."); } 
+    else {
+        const u = users.find(x => x.email === session.email);
+        u.name = document.getElementById('cp-name').value; u.pass = document.getElementById('cp-pass').value; save();
+        alert("Profil güncellendi. Tekrar giriş yapın."); logout();
+    }
+}
+
+function applyOpsFilter() { renderOpsTable(currentReqType); }
+function clearOpsFilter() { document.getElementById('admin-date-filter').value = ""; renderOpsTable(currentReqType); }
+function setBanner() { const msg = prompt("Duyuru metni:", bannerMsg); if(msg !== null) { bannerMsg = msg; save(); location.reload(); } }
+
+function filterTable(areaId, query) {
+    const q = query.toLowerCase();
+    const rows = document.querySelectorAll(`#${areaId} tr`);
+    rows.forEach((row, index) => {
+        if(index === 0) return;
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(q) ? "" : "none";
+    });
+}
+</script>
+</body>
+</html>
